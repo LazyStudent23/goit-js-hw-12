@@ -20,17 +20,16 @@ let cardHeight = 0;
 const onSearchFormSubmit = async event => {
   event.preventDefault();
   searchedValue = searchFormEl.elements.user_query.value;
-  if (searchedValue = '') {
-    return iziToast.warning({
-      message: 'Please, enter your request in the field!',
-      position: 'topRight',
-    });
-  };
     loaderShow();
   console.log(searchedValue);
 
   currentPage = 1;
-
+  // if (searchedValue = '') {
+  //   return iziToast.warning({
+  //     message: 'Please, enter your request in the field!',
+  //     position: 'topRight',
+  //   });
+  // };
   const responce = await fetchPhotos(searchedValue, currentPage);
 
   try {
