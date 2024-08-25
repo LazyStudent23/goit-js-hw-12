@@ -5,18 +5,27 @@ import { lightbox } from "./js/render-functions";
 
 const searchFormEl = document.querySelector('.js-search-form');
 const galleryList = document.querySelector('.js-gallery');
-const formReset = () => searchFormEl.reset();
 const loader = document.querySelector('.js-loader');
+const loadMoreBtnEl = document.querySelector('.js-load-more');
+const formReset = () => searchFormEl.reset();
 const loaderShow = () => {
     loader.classList.remove('is-hidden');
 }
-const onSearchFormSubmit = event => {
+
+let currentPage = 1;
+let searchedValue = '';
+let cardHeight = 0;
+
+const onSearchFormSubmit = async event => {
     event.preventDefault();
     loaderShow();
   const searchedValue = searchFormEl.elements.user_query.value;
-  fetchPhotos(searchedValue)
-      .then(data => {
-      if (data.hits.length === 0) {
+
+  currentPage = 1;
+  
+  const responce = await fetchPhotos(searchedValue);
+  try {
+    if (responce.data.hits.length === 0) {
         iziToast.error({
           message: 'Sorry, there are no images matching your search query. Please try again!',
           position: 'topRight',
@@ -28,22 +37,50 @@ const onSearchFormSubmit = event => {
         return;
           }
           galleryList.innerHTML = '';
-      const galleryCreateMarkup = data.hits.map(imgDetails => createMarkup(imgDetails)).join('');
+      const galleryCreateMarkup = responce.data.hits.map(imgDetails => createMarkup(imgDetails)).join('');
 
           galleryList.insertAdjacentHTML("beforeend", galleryCreateMarkup);
           formReset();
-          lightbox.refresh();
-    })
-    .catch(err => {
-      console.log(err);
+    lightbox.refresh();
+
+    const galleryCardEl = galleryEl.querySelector('li');
+
+    cardHeight = galleryCardEl.getBoundingClientRect().height;
+
+    loadMoreBtnEl.classList.remove('is-hidden');
+
+    } catch(err) {
       iziToast.error({
         message: 'Sorry, something get wrong. Try again later!',
         position: 'topRight',
       });
-    })
-      .finally(() => {
-          loader.classList.add('is-hidden');
-    })
+    }
+      loader.classList.add('is-hidden');
+    
+};
+
+const onLoadMoreBtnClick = async event => {
+  try {
+    currentPage += 1;
+
+    const response = await fetchPhotos(searchedValue, currentPage);
+
+    const galleryCreateMarkup = responce.data.hits.map(imgDetails => createMarkup(imgDetails)).join('');
+
+          galleryList.insertAdjacentHTML("beforeend", galleryCreateMarkup);
+
+    scrollBy({
+      top: cardHeight * 2,
+      behavior: 'smooth',
+    });
+
+    if (currentPage === response.data.totalHits) {
+      loadMoreBtnEl.classList.add('is-hidden');
+    }
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 searchFormEl.addEventListener('submit', onSearchFormSubmit);
+loadMoreBtnEl.addEventListener('click', onLoadMoreBtnClick);
