@@ -73,7 +73,7 @@ const onSearchFormSubmit = async event => {
 const onLoadMoreBtnClick = async event => {
   const responce = await fetchPhotos(searchedValue, currentPage);
   try {
-    currentPage += 1;
+    currentPage++;
 
     const galleryCreateMarkup = responce.data.hits.map(imgDetails => createMarkup(imgDetails)).join('');
 
