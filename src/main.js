@@ -22,7 +22,7 @@ const onSearchFormSubmit = async event => {
     loaderShow();
   searchedValue = searchFormEl.elements.user_query.value;
 
-  currentPage = 32;
+  currentPage = 1;
 
   const responce = await fetchPhotos(searchedValue, currentPage);
 
