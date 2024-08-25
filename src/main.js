@@ -22,9 +22,10 @@ const onSearchFormSubmit = async event => {
     loaderShow();
   searchedValue = searchFormEl.elements.user_query.value;
 
-  currentPage = 1;
+  currentPage = 34;
 
   const responce = await fetchPhotos(searchedValue, currentPage);
+  console.log(responce);
   try {
     if (responce.data.hits.length === 0) {
         iziToast.error({
