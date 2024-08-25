@@ -22,10 +22,10 @@ const onSearchFormSubmit = async event => {
     loaderShow();
   searchedValue = searchFormEl.elements.user_query.value;
 
-  currentPage = 34;
+  currentPage = 32;
 
   const responce = await fetchPhotos(searchedValue, currentPage);
-  console.log(responce);
+
   try {
     if (responce.data.hits.length === 0) {
         iziToast.error({
@@ -37,7 +37,8 @@ const onSearchFormSubmit = async event => {
           formReset();
 
         return;
-          }
+    }
+    
           galleryList.innerHTML = '';
       const galleryCreateMarkup = responce.data.hits.map(imgDetails => createMarkup(imgDetails)).join('');
 
@@ -48,8 +49,15 @@ const onSearchFormSubmit = async event => {
     const galleryCardEl = galleryList.querySelector('li');
 
     cardHeight = galleryCardEl.getBoundingClientRect().height;
-
+     
     loadMoreBtnEl.classList.remove('is-hidden');
+    if (Math.ceil(responce.data.totalHits / 15) === currentPage) {
+      iziToast.info({
+        message: 'It`s all images for your request!',
+        position: 'topRight',
+      })
+      loadMoreBtnEl.classList.add('is-hidden');
+    }
 
   } catch (err) {
     console.log(err);
@@ -63,13 +71,11 @@ const onSearchFormSubmit = async event => {
 };
 
 const onLoadMoreBtnClick = async event => {
+  const responce = await fetchPhotos(searchedValue, currentPage);
   try {
     currentPage += 1;
 
-    const response = await fetchPhotos(searchedValue, currentPage);
-    console.log(searchedValue);
-
-    const galleryCreateMarkup = response.data.hits.map(imgDetails => createMarkup(imgDetails)).join('');
+    const galleryCreateMarkup = responce.data.hits.map(imgDetails => createMarkup(imgDetails)).join('');
 
           galleryList.insertAdjacentHTML("beforeend", galleryCreateMarkup);
 
@@ -77,8 +83,11 @@ const onLoadMoreBtnClick = async event => {
       top: cardHeight * 2,
       behavior: 'smooth',
     });
-
-    if (currentPage === response.data.totalHits) {
+   if (Math.ceil(responce.data.totalHits / 15) === currentPage) {
+      iziToast.info({
+        message: 'It`s all images for your request!',
+        position: 'topRight',
+      })
       loadMoreBtnEl.classList.add('is-hidden');
     }
   } catch (err) {
