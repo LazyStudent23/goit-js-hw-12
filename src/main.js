@@ -7,6 +7,7 @@ const searchFormEl = document.querySelector('.js-search-form');
 const galleryList = document.querySelector('.js-gallery');
 const loader = document.querySelector('.js-loader');
 const loadMoreBtnEl = document.querySelector('.js-load-more');
+
 const formReset = () => searchFormEl.reset();
 const loaderShow = () => {
     loader.classList.remove('is-hidden');
@@ -22,8 +23,8 @@ const onSearchFormSubmit = async event => {
   const searchedValue = searchFormEl.elements.user_query.value;
 
   currentPage = 1;
-  
-  const responce = await fetchPhotos(searchedValue);
+
+  const responce = await fetchPhotos(searchedValue, currentPage);
   try {
     if (responce.data.hits.length === 0) {
         iziToast.error({
