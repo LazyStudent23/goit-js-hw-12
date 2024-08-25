@@ -18,9 +18,16 @@ let searchedValue = '';
 let cardHeight = 0;
 
 const onSearchFormSubmit = async event => {
-    event.preventDefault();
-    loaderShow();
+  event.preventDefault();
   searchedValue = searchFormEl.elements.user_query.value;
+  if (searchedValue = '') {
+    return iziToast.warning({
+      message: 'Please, enter your request in the field!',
+      position: 'topRight',
+    });
+  };
+    loaderShow();
+  console.log(searchedValue);
 
   currentPage = 1;
 
@@ -92,6 +99,10 @@ const onLoadMoreBtnClick = async event => {
     }
   } catch (err) {
     console.log(err);
+    iziToast.error({
+        message: 'Sorry, something get wrong. Try again later!',
+        position: 'topRight',
+      });
   }
 };
 
