@@ -20,7 +20,7 @@ let cardHeight = 0;
 const onSearchFormSubmit = async event => {
     event.preventDefault();
     loaderShow();
-  const searchedValue = searchFormEl.elements.user_query.value;
+  searchedValue = searchFormEl.elements.user_query.value;
 
   currentPage = 1;
 
@@ -44,13 +44,14 @@ const onSearchFormSubmit = async event => {
           formReset();
     lightbox.refresh();
 
-    const galleryCardEl = galleryEl.querySelector('li');
+    const galleryCardEl = galleryList.querySelector('li');
 
     cardHeight = galleryCardEl.getBoundingClientRect().height;
 
     loadMoreBtnEl.classList.remove('is-hidden');
 
-    } catch(err) {
+  } catch (err) {
+    console.log(err);
       iziToast.error({
         message: 'Sorry, something get wrong. Try again later!',
         position: 'topRight',
@@ -65,8 +66,9 @@ const onLoadMoreBtnClick = async event => {
     currentPage += 1;
 
     const response = await fetchPhotos(searchedValue, currentPage);
+    console.log(searchedValue);
 
-    const galleryCreateMarkup = responce.data.hits.map(imgDetails => createMarkup(imgDetails)).join('');
+    const galleryCreateMarkup = response.data.hits.map(imgDetails => createMarkup(imgDetails)).join('');
 
           galleryList.insertAdjacentHTML("beforeend", galleryCreateMarkup);
 

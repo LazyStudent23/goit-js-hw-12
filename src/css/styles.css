@@ -117,14 +117,15 @@ button {
 
 .load-more {
   font-size: 14px;
+  display: block;
     padding: 10px 20px;
+    margin: 30px auto;
     background-color: #1a5cd6;
     color: #ffffff;
     border: none;
     border-radius: 10px;
     text-transform: uppercase;
     cursor: pointer;
-    margin-left: 10px;
 }
 
 .loader {
