@@ -10,7 +10,7 @@ const loadMoreBtnEl = document.querySelector('.js-load-more');
 
 const formReset = () => searchFormEl.reset();
 const loaderShow = () => {
-    loader.classList.remove('is-hidden');
+  loader.classList.remove('is-hidden');
 }
 
 let currentPage = 1;
@@ -19,43 +19,46 @@ let cardHeight = 0;
 
 const onSearchFormSubmit = async event => {
   event.preventDefault();
-  searchedValue = searchFormEl.elements.user_query.value;
-    loaderShow();
   console.log(searchedValue);
+  searchedValue = searchFormEl.elements.user_query.value;
+  if (searchedValue === "") {
+      iziToast.warning({
+      message: 'Please, enter your request in the field!',
+      position: 'topRight',
+    })
+    return;
+  }
+  loaderShow();
+  
 
   currentPage = 1;
-  // if (searchedValue = '') {
-  //   return iziToast.warning({
-  //     message: 'Please, enter your request in the field!',
-  //     position: 'topRight',
-  //   });
-  // };
+  
   const responce = await fetchPhotos(searchedValue, currentPage);
 
   try {
     if (responce.data.hits.length === 0) {
-        iziToast.error({
-          message: 'Sorry, there are no images matching your search query. Please try again!',
-          position: 'topRight',
-        });
+      iziToast.error({
+        message: 'Sorry, there are no images matching your search query. Please try again!',
+        position: 'topRight',
+      });
 
-        galleryList.innerHTML = '';
-          formReset();
+      galleryList.innerHTML = '';
+      formReset();
 
-        return;
+      return;
     }
     
-          galleryList.innerHTML = '';
-      const galleryCreateMarkup = responce.data.hits.map(imgDetails => createMarkup(imgDetails)).join('');
+    galleryList.innerHTML = '';
+    const galleryCreateMarkup = responce.data.hits.map(imgDetails => createMarkup(imgDetails)).join('');
 
-          galleryList.insertAdjacentHTML("beforeend", galleryCreateMarkup);
-          formReset();
+    galleryList.insertAdjacentHTML("beforeend", galleryCreateMarkup);
+    formReset();
     lightbox.refresh();
 
     const galleryCardEl = galleryList.querySelector('li');
 
     cardHeight = galleryCardEl.getBoundingClientRect().height;
-     
+
     loadMoreBtnEl.classList.remove('is-hidden');
     if (Math.ceil(responce.data.totalHits / 15) === currentPage) {
       iziToast.info({
@@ -67,13 +70,13 @@ const onSearchFormSubmit = async event => {
 
   } catch (err) {
     console.log(err);
-      iziToast.error({
-        message: 'Sorry, something get wrong. Try again later!',
-        position: 'topRight',
-      });
-    }
-      loader.classList.add('is-hidden');
-    
+    iziToast.error({
+      message: 'Sorry, something get wrong. Try again later!',
+      position: 'topRight',
+    });
+  }
+  loader.classList.add('is-hidden');
+
 };
 
 const onLoadMoreBtnClick = async event => {
@@ -83,13 +86,14 @@ const onLoadMoreBtnClick = async event => {
 
     const galleryCreateMarkup = responce.data.hits.map(imgDetails => createMarkup(imgDetails)).join('');
 
-          galleryList.insertAdjacentHTML("beforeend", galleryCreateMarkup);
+    galleryList.insertAdjacentHTML("beforeend", galleryCreateMarkup);
+    lightbox.refresh();
 
     scrollBy({
       top: cardHeight * 2,
       behavior: 'smooth',
     });
-   if (Math.ceil(responce.data.totalHits / 15) === currentPage) {
+    if (Math.ceil(responce.data.totalHits / 15) === currentPage) {
       iziToast.info({
         message: 'It`s all images for your request!',
         position: 'topRight',
@@ -99,9 +103,9 @@ const onLoadMoreBtnClick = async event => {
   } catch (err) {
     console.log(err);
     iziToast.error({
-        message: 'Sorry, something get wrong. Try again later!',
-        position: 'topRight',
-      });
+      message: 'Sorry, something get wrong. Try again later!',
+      position: 'topRight',
+    });
   }
 };
 
