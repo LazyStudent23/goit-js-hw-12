@@ -19,7 +19,6 @@ let cardHeight = 0;
 
 const onSearchFormSubmit = async event => {
   event.preventDefault();
-  console.log(searchedValue);
   searchedValue = searchFormEl.elements.user_query.value;
   if (searchedValue === "") {
       iziToast.warning({
